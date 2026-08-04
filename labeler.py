@@ -36,7 +36,11 @@ class SemanticLabeler:
         # ماسک دسته‌ی هر prototype برای محاسبه‌ی گروهی امتیاز دسته
         self.proto_texts = [p["text"] for p in self.prototypes]
         self.proto_cats = [p["category"] for p in self.prototypes]
-        self.proto_cat_idx = {c: i for i, c in enumerate(self.cat_keys)}
+        self.proto_cat_indices = {
+            cat: np.fromiter((i for i, c in enumerate(self.proto_cats) if c == cat),
+                             dtype=np.int64)
+            for cat in self.cat_keys
+        }
         self._proto_emb = self._embed_prototypes()
 
     # --- امبدینگ ---
@@ -72,12 +76,11 @@ class SemanticLabeler:
 
         # برای هر دسته، روی prototypeهای آن: max یا میانگین top-k
         for ci, cat in enumerate(self.cat_keys):
-            cols = [i for i, c in enumerate(self.proto_cats) if c == cat]
+            cols = self.proto_cat_indices[cat]
             sub = sim[:, cols]  # (N, P_cat)
             if top_k <= 1:
                 scores[:, ci] = sub.max(axis=1)
             else:
-                # میانگین top-k شباهت‌ها در این دسته
                 k = min(top_k, sub.shape[1])
                 part = np.partition(sub, -k, axis=1)[:, -k:]
                 scores[:, ci] = part.mean(axis=1)
@@ -89,14 +92,17 @@ class SemanticLabeler:
                       multi_label: bool = config.MULTI_LABEL
                       ) -> list[dict]:
         results: list[dict] = []
+        order = np.argsort(scores, axis=1)[:, ::-1]
+        n_categories = scores.shape[1]
+
         for i in range(scores.shape[0]):
-            order = np.argsort(scores[i])[::-1]
-            top_idx = int(order[0])
+            row_order = order[i]
+            top_idx = int(row_order[0])
             top_cat = self.cat_keys[top_idx]
             top_score = float(scores[i, top_idx])
 
             if multi_label:
-                above = [self.cat_keys[j] for j in order
+                above = [self.cat_keys[j] for j in row_order
                          if scores[i, j] >= threshold]
                 labels = above if above else [top_cat]
             else:
@@ -108,7 +114,7 @@ class SemanticLabeler:
                 "labels": labels,
                 "score_vector": {
                     self.cat_keys[j]: round(float(scores[i, j]), 4)
-                    for j in range(len(self.cat_keys))
+                    for j in range(n_categories)
                 },
                 "confident": top_score >= threshold,
             })

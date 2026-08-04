@@ -59,8 +59,8 @@ def build_report(df: pd.DataFrame, scores: np.ndarray,
     # میانگین امتیاز هر دسته روی کل نمونه‌ها (بدون شرط top-1) — نشان‌دهنده‌ی
     # میزان هم‌خوانی کلی داده‌ها با آن دسته.
     global_cat_score = {
-        c: round(float(scores[:, cat_keys.index(c)].mean()), 4)
-        for c in cat_keys
+        cat: round(float(mean), 4)
+        for cat, mean in zip(cat_keys, np.mean(scores, axis=0))
     }
 
     # رتبه‌بندی ضعیف→قوی بر اساس count و mean_score ترکیبی
