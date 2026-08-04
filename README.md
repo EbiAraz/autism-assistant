@@ -1,5 +1,7 @@
 # Autism Assistant — Semantic Labeling & Gap Analysis on MentalChat16K
 
+[![Python tests](https://github.com/EbiAraz/autism-assistant/actions/workflows/python-tests.yml/badge.svg)](https://github.com/EbiAraz/autism-assistant/actions/workflows/python-tests.yml)
+
 پروژه‌ی توسعه‌ی یک LLM (با RAG یا fine-tuning) برای **بیماران اوتیستیک با تأخیر زبانی (language delay)**.
 این مخزن مرحله‌ی آماده‌سازی داده را پیاده‌سازی می‌کند: بارگذاری دیتاست **MentalChat16K** (گروه سلامت روان)،
 لیبل‌گذاری معنایی (semantic similarity) نمونه‌ها بر اساس ۷ دسته‌ی فکت اوتیسم (A تا G)، و تحلیل شکاف (gap analysis)
@@ -37,6 +39,23 @@ python main.py --limit 100
 
 خروجی‌ها در پوشه‌ی `outputs/` نوشته می‌شوند: `labeled.csv`, `gap_analysis.md`,
 `gap_analysis.json`, `gap_distribution.png`.
+
+## Tests / تست‌ها
+
+برای اجرای تست‌ها از `pytest` استفاده کنید:
+
+```bash
+python -m pytest
+```
+
+## Continuous Integration / یکپارچه‌سازی پیوسته
+
+این مخزن یک GitHub Actions workflow دارد که روی هر `push` و `pull_request` به `main`
+تست‌ها را اجرا می‌کند.
+
+| Workflow | Description |
+|----------|-------------|
+| `.github/workflows/python-tests.yml` | Run `pytest` on Ubuntu with Python 3.12 |
 
 ## Categories / دسته‌ها (A–G)
 
