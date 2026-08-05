@@ -15,10 +15,9 @@ from __future__ import annotations
 import numpy as np
 import torch
 from sentence_transformers import SentenceTransformer
-from tqdm import tqdm
 
 import config
-from facts import CATEGORY_KEYS, CATEGORIES, get_prototypes
+from facts import CATEGORY_KEYS, get_prototypes
 
 
 class SemanticLabeler:
