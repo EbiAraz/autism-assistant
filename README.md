@@ -37,6 +37,11 @@ python main.py --limit 0
 python main.py --limit 100
 ```
 
+```bash
+# راه‌اندازی رابط کاربری مرورگر
+streamlit run ui.py
+```
+
 خروجی‌ها در پوشه‌ی `outputs/` نوشته می‌شوند: `labeled.csv`, `gap_analysis.md`,
 `gap_analysis.json`, `gap_distribution.png`.
 
